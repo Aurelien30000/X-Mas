@@ -71,7 +71,7 @@ public class Main extends JavaPlugin implements Listener {
         PARTICLES_DELAY = config.getInt("core.particles-delay");
         if (PARTICLES_DELAY <= 0)
             config.set("particles-delay", 35);
-        
+
         autoEnd = config.getBoolean("core.holiday-ends.enabled");
         resourceBack = config.getBoolean("core.holiday-ends.resource-back");
         MAX_TREE_COUNT = config.getInt("core.tree-limit");

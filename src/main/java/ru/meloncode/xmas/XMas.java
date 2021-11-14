@@ -12,18 +12,15 @@ import org.jetbrains.annotations.Nullable;
 import ru.meloncode.xmas.utils.LocationUtils;
 import ru.meloncode.xmas.utils.TextUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static ru.meloncode.xmas.Main.RANDOM;
 
 class XMas {
 
-    private static final ConcurrentHashMap<UUID, MagicTree> trees = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<Long, List<MagicTree>> trees_byChunk = new ConcurrentHashMap<>();
+    private static final Map<UUID, MagicTree> trees = new ConcurrentHashMap<>();
+    private static final Map<Long, List<MagicTree>> trees_byChunk = new ConcurrentHashMap<>();
     public static ItemStack XMAS_CRYSTAL;
 
     public static void createMagicTree(Player player, Location loc) {
@@ -58,22 +55,22 @@ class XMas {
         if (block.getType() == Material.PLAYER_HEAD) {
             Skull skull = (Skull) block.getState();
 
-                if (Main.getHeads().contains(skull.getOwner())) {
-                    Location loc = block.getLocation();
-                    World world = loc.getWorld();
-                    if (world != null) {
-                        if (RANDOM.nextFloat() < Main.LUCK_CHANCE || !Main.LUCK_CHANCE_ENABLED) {
-                            world.dropItemNaturally(loc, new ItemStack(Main.gifts.get(RANDOM.nextInt(Main.gifts.size()))));
-                            Effects.TREE_SWAG.playEffect(loc);
-                            TextUtils.sendMessage(player, LocaleManager.GIFT_LUCK);
-                        } else {
-                            Effects.SMOKE.playEffect(loc);
-                            world.dropItemNaturally(loc, new ItemStack(Material.COAL));
-                            TextUtils.sendMessage(player, LocaleManager.GIFT_FAIL);
-                        }
+            if (Main.getHeads().contains(skull.getOwner())) {
+                Location loc = block.getLocation();
+                World world = loc.getWorld();
+                if (world != null) {
+                    if (RANDOM.nextFloat() < Main.LUCK_CHANCE || !Main.LUCK_CHANCE_ENABLED) {
+                        world.dropItemNaturally(loc, new ItemStack(Main.gifts.get(RANDOM.nextInt(Main.gifts.size()))));
+                        Effects.TREE_SWAG.playEffect(loc);
+                        TextUtils.sendActionBarMessage(player, LocaleManager.GIFT_LUCK);
+                    } else {
+                        Effects.SMOKE.playEffect(loc);
+                        world.dropItemNaturally(loc, new ItemStack(Material.COAL));
+                        TextUtils.sendActionBarMessage(player, LocaleManager.GIFT_FAIL);
                     }
-                    block.setType(Material.AIR);
                 }
+                block.setType(Material.AIR);
+            }
         }
     }
 

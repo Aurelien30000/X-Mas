@@ -9,16 +9,13 @@ import org.bukkit.entity.Player;
 import ru.meloncode.xmas.LocaleManager;
 import ru.meloncode.xmas.MagicTree;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class TextUtils {
 
-    public static List<String> generateChatReqList(MagicTree tree) {
+    public static String generateChatReqList(MagicTree tree) {
         if (tree == null)
             throw new NullArgumentException("tree");
-        List<String> list = new ArrayList<>();
-        list.add(ChatColor.GOLD + LocaleManager.GROW_REQ_LIST_TITLE + ":");
+        StringBuilder string = new StringBuilder();
+        string.append(ChatColor.GOLD).append(LocaleManager.GROW_REQ_LIST_TITLE).append(" : ");
         if (tree.getLevel().getLevelupRequirements() != null && tree.getLevel().getLevelupRequirements().size() > 0)
             for (Material cMaterial : tree.getLevel().getLevelupRequirements().keySet()) {
                 int levelReq = tree.getLevel().getLevelupRequirements().get(cMaterial);
@@ -26,14 +23,19 @@ public class TextUtils {
                 if (tree.getLevelupRequirements().containsKey(cMaterial))
                     treeReq = tree.getLevelupRequirements().get(cMaterial);
 
-                list.add(ChatColor.BOLD + "" + (treeReq == 0 ? ChatColor.GREEN + "" + ChatColor.STRIKETHROUGH : ChatColor.RED) + WordUtils.capitalizeFully(String.valueOf(cMaterial).replace('_', ' ') + " : " + (levelReq - treeReq + " / " + levelReq)));
+                string.append(ChatColor.BOLD).append(treeReq == 0 ? ChatColor.GREEN + "" + ChatColor.STRIKETHROUGH : ChatColor.RED).append(WordUtils.capitalizeFully(String.valueOf(cMaterial).replace('_', ' ') + " : " + (levelReq - treeReq + " / " + levelReq))).append(ChatColor.RESET).append(" ").append(ChatColor.GOLD).append("-").append(" ");
             }
-        return list;
+        return string.toString();
     }
 
     public static void sendMessage(Player player, String message) {
         if (player != null && message != null)
             player.sendMessage(ChatColor.DARK_RED + "[" + ChatColor.DARK_GREEN + LocaleManager.PLUGIN_NAME + ChatColor.DARK_RED + "] " + ChatColor.RESET + message);
+    }
+
+    public static void sendActionBarMessage(Player player, String message) {
+        if (player != null && message != null)
+            player.sendActionBar(ChatColor.DARK_RED + "[" + ChatColor.DARK_GREEN + LocaleManager.PLUGIN_NAME + ChatColor.DARK_RED + "] " + ChatColor.RESET + message);
     }
 
     public static void sendConsoleMessage(String message) {

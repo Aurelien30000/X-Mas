@@ -4,9 +4,11 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 
 public class LocationUtils {
+
     public static long getChunkKey(Chunk chunk) {
         return getChunkKey(chunk.getX(), chunk.getZ());
     }
+
     public static long getChunkKey(Location location) {
         return getChunkKey(location.getBlockX(), location.getBlockZ());
     }
@@ -21,4 +23,5 @@ public class LocationUtils {
         int floor = (int) num;
         return floor == num ? floor : floor - (int) (Double.doubleToRawLongBits(num) >>> 63);
     }
+
 }

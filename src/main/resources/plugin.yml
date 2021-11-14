@@ -3,8 +3,8 @@ version: ${project.version}
 main: ru.meloncode.xmas.Main
 load: POSTWORLD
 api-version: '1.14'
-softdepend: [Multiverse-Core, PlotMe, PlotSquared, Plotz]
+softdepend: [ Multiverse-Core, PlotMe, PlotSquared, Plotz ]
 commands:
- xmas:
-  usage: Use /<command> help to see help
-  permission: xmas.admin
+  xmas:
+    usage: Use /<command> help to see help
+    permission: xmas.admin

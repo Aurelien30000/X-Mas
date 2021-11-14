@@ -19,7 +19,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.jetbrains.annotations.Nullable;
 import ru.meloncode.xmas.utils.TextUtils;
 
 import java.util.Collection;
@@ -49,7 +48,7 @@ class Events implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onPlayerOpenPresent(BlockBreakEvent event) {
         Block block = event.getBlock();
-        if (block != null && block.getType() == Material.PLAYER_HEAD) {
+        if (block.getType() == Material.PLAYER_HEAD) {
             XMas.processPresent(block, event.getPlayer());
         }
     }
@@ -83,7 +82,6 @@ class Events implements Listener {
                             if (event.getItem() != null) {
                                 ItemStack is = event.getItem();
                                 if (tree.grow(is.getType())) {
-                                    TextUtils.sendMessage(player, LocaleManager.GROW_LVL_PROGRESS);
                                     if (player.getGameMode() != GameMode.CREATIVE) {
                                         if (is.getAmount() > 1) {
                                             is.setAmount(is.getAmount() - 1);
@@ -94,10 +92,7 @@ class Events implements Listener {
                                 }
                             }
                             if (tree.level.nextLevel != null) {
-                                TextUtils.sendMessage(player, LocaleManager.GROW_LVL_PROGRESS);
-                                for (String line : TextUtils.generateChatReqList(tree)) {
-                                    TextUtils.sendMessage(player, line);
-                                }
+                                TextUtils.sendActionBarMessage(player, TextUtils.generateChatReqList(tree));
 
                                 if (tree.getLevelupRequirements().size() == 0) {
                                     TextUtils.sendMessage(player, LocaleManager.GROW_LVL_READY);
@@ -118,31 +113,33 @@ class Events implements Listener {
             } else {
                 if (block.getType() == Material.SPRUCE_SAPLING) {
                     ItemStack is = event.getItem();
-                    if (is != null)
-                        if (Main.inProgress) {
-                            if (XMas.getTreesPlayerOwn(player).size() < Main.MAX_TREE_COUNT) {
-                                if (is.getType() == XMas.XMAS_CRYSTAL.getType() && is.hasItemMeta() && is.getItemMeta().hasLore()) {
-                                    ItemMeta im = is.getItemMeta();
-                                    if (im.getLore().equals(XMas.XMAS_CRYSTAL.getItemMeta().getLore())) {
-                                        if (player.getGameMode() != GameMode.CREATIVE) {
-                                            if (is.getAmount() > 1) {
-                                                is.setAmount(is.getAmount() - 1);
-                                            } else {
-                                                event.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
-                                            }
+                    if (is == null) return;
+
+                    if (Main.inProgress) {
+                        if (is.getType() == XMas.XMAS_CRYSTAL.getType() && is.hasItemMeta() && is.getItemMeta().hasLore()) {
+                            ItemMeta im = is.getItemMeta();
+                            if (im.getLore().equals(XMas.XMAS_CRYSTAL.getItemMeta().getLore())) {
+                                if (XMas.getTreesPlayerOwn(player).size() < Main.MAX_TREE_COUNT) {
+                                    if (player.getGameMode() != GameMode.CREATIVE) {
+                                        if (is.getAmount() > 1) {
+                                            is.setAmount(is.getAmount() - 1);
+                                        } else {
+                                            event.getPlayer().getInventory().setItemInMainHand(new ItemStack(Material.AIR));
                                         }
-                                        XMas.createMagicTree(player, block.getLocation());
                                     }
+                                    XMas.createMagicTree(player, block.getLocation());
+                                } else {
+                                    TextUtils.sendMessage(player, LocaleManager.TREE_LIMIT);
                                 }
-                            } else {
-                                TextUtils.sendMessage(player, LocaleManager.TREE_LIMIT);
                             }
-                        } else {
-                            TextUtils.sendMessage(player, LocaleManager.TIMEOUT);
                         }
+                    } else {
+                        TextUtils.sendMessage(player, LocaleManager.TIMEOUT);
+                    }
                 }
             }
         }
+
     }
 
     @EventHandler
@@ -275,12 +272,11 @@ class Events implements Listener {
     }
 
     @EventHandler
-    public void disableDecay(LeavesDecayEvent e)
-    {
-        if(e.isCancelled())
+    public void disableDecay(LeavesDecayEvent e) {
+        if (e.isCancelled())
             return;
 
-        if(e.getBlock().getType() != Material.SPRUCE_LEAVES)
+        if (e.getBlock().getType() != Material.SPRUCE_LEAVES)
             return;
 
         if (MagicTree.isBlockBelongs(e.getBlock().getLocation().getBlock()))
@@ -288,8 +284,7 @@ class Events implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    private void disableFireworkDamage(EntityDamageByEntityEvent e)
-    {
+    private void disableFireworkDamage(EntityDamageByEntityEvent e) {
         if (e.getDamager().getType() == EntityType.FIREWORK) {
             if (e.getDamager().hasMetadata("nodamage")) {
                 e.setCancelled(true);
@@ -298,15 +293,14 @@ class Events implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
-    private void chunkLoad(ChunkLoadEvent e)
-    {
-        Collection<MagicTree> trees = XMas.getAllTreesInChunk(e.getChunk());
-        if(trees == null)
+    private void chunkLoad(ChunkLoadEvent event) {
+        final Collection<MagicTree> trees = XMas.getAllTreesInChunk(event.getChunk());
+        if (trees == null)
             return;
-        for(MagicTree tree : trees)
-        {
-            if(tree.hasScheduledPresents())
+        for (MagicTree tree : trees) {
+            if (tree.hasScheduledPresents())
                 tree.spawnScheduledPresents();
         }
     }
+
 }

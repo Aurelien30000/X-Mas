@@ -12,8 +12,11 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MagicTree {
@@ -35,18 +38,16 @@ public class MagicTree {
         this.levelupRequirements = new HashMap<>(level.getLevelupRequirements());
         if (Main.inProgress)
             build();
-        presentCounter = 0;
-        scheduledPresents = 0;
+        this.presentCounter = 0;
+        this.scheduledPresents = 0;
     }
 
-    public MagicTree(UUID owner, UUID uid, TreeLevel level, Location location, Map<Material, Integer> levelupRequirements,
-                     long presentCounter, int scheduledPresents) {
+    public MagicTree(UUID owner, UUID uid, TreeLevel level, Location location, Map<Material, Integer> levelupRequirements, long presentCounter, int scheduledPresents) {
         this.owner = owner;
         this.treeuid = uid;
         this.level = level;
         this.location = location;
         this.levelupRequirements = new HashMap<>(levelupRequirements);
-        this.presentCounter = 0;
         this.presentCounter = presentCounter;
         if (Main.inProgress)
             build();
@@ -116,12 +117,11 @@ public class MagicTree {
         }
     }
 
-    public void playParticles()
-    {
+    public void playParticles() {
         if (blocks != null && blocks.size() > 0) {
+            if (!location.isChunkLoaded())
+                return;
             for (Block block : blocks) {
-                if(!block.getWorld().isChunkLoaded(block.getX() / 16, block.getZ() / 16))
-                    continue;
                 if (block.getType() == Material.SPRUCE_LEAVES) {
                     if (level.getSwagEffect() != null) {
                         level.getSwagEffect().playEffect(block.getLocation());
@@ -140,14 +140,12 @@ public class MagicTree {
     }
 
     public boolean tryLevelUp() {
-
         if (level.hasNext()) {
             if (level.nextLevel.getStructureTemplate().canGrow(location)) {
                 levelUp();
                 return true;
             }
         }
-
         return false;
     }
 
@@ -192,37 +190,37 @@ public class MagicTree {
 
     @SuppressWarnings("deprecation")
     public void spawnPresent() {
-        if(!location.getWorld().isChunkLoaded((int)location.getX() / 16, (int)location.getZ() / 16))
-        {
-            if(scheduledPresents + 1 <= 8)
+        Location presentLoc = location.clone().add(-1 + Main.RANDOM.nextInt(3), 0, -1 + Main.RANDOM.nextInt(3));
+        if (!presentLoc.isChunkLoaded()) {
+            if (scheduledPresents + 1 <= 8)
                 scheduledPresents++;
             return;
         }
 
-        Location presentLoc = location.clone().add(-1 + Main.RANDOM.nextInt(3), 0, -1 + Main.RANDOM.nextInt(3));
+        presentLoc.getWorld().getChunkAtAsync(location, false).thenRun(() -> {
+            final Block pBlock = presentLoc.getBlock();
 
-        Block pBlock = presentLoc.getBlock();
-        if (!pBlock.getType().isSolid() && pBlock.getType() != Material.SPRUCE_SAPLING)
-        {
-            pBlock.setType(Material.PLAYER_HEAD);
-            BlockState state = pBlock.getState();
-            if (state instanceof Skull) {
-                Skull skull = (Skull) state;
-                BlockFace face;
-                do {
-                    face = BlockFace.values()[Main.RANDOM.nextInt(BlockFace.values().length)];
+            if (!pBlock.getType().isSolid() && pBlock.getType() != Material.SPRUCE_SAPLING) {
+                pBlock.setType(Material.PLAYER_HEAD);
+                final BlockState state = pBlock.getState();
+                if (state instanceof Skull) {
+                    final Skull skull = (Skull) state;
+                    BlockFace face;
+                    do {
+                        face = BlockFace.values()[Main.RANDOM.nextInt(BlockFace.values().length)];
+                    }
+                    while (face == BlockFace.DOWN || face == BlockFace.UP || face == BlockFace.SELF);
+                    //skull.setRotation(face);
+                    final Rotatable skullRotatable = (Rotatable) skull.getBlockData();
+                    skullRotatable.setRotation(face);
+                    //skull.setSkullType(SkullType.PLAYER);
+                    skull.setType(Material.PLAYER_HEAD);
+                    //skull.setOwner();
+                    skull.setOwningPlayer(Bukkit.getOfflinePlayer(Main.getHeads().get(Main.RANDOM.nextInt(Main.getHeads().size()))));
+                    skull.update(true);
                 }
-                while (face == BlockFace.DOWN || face == BlockFace.UP || face == BlockFace.SELF);
-                //skull.setRotation(face);
-                Rotatable skullRotatable = (Rotatable) skull.getBlockData();
-                skullRotatable.setRotation(face);
-                //skull.setSkullType(SkullType.PLAYER);
-                skull.setType(Material.PLAYER_HEAD);
-                //skull.setOwner();
-                skull.setOwningPlayer(Bukkit.getOfflinePlayer(Main.getHeads().get(Main.RANDOM.nextInt(Main.getHeads().size()))));
-                skull.update(true);
             }
-        }
+        });
     }
 
     public boolean canLevelUp() {
@@ -262,8 +260,8 @@ public class MagicTree {
         if (Main.resourceBack) {
             bl = location.getBlock();
             bl.setType(Material.CHEST);
-            Chest chest = (Chest) bl.getState();
-            Inventory inv = chest.getInventory();
+            final Chest chest = (Chest) bl.getState();
+            final Inventory inv = chest.getInventory();
 
             inv.addItem(new ItemStack(Material.DIAMOND, 4));
             inv.addItem(new ItemStack(Material.EMERALD, 1));
@@ -305,8 +303,9 @@ public class MagicTree {
     }
 
     public void spawnScheduledPresents() {
-        for(int i = scheduledPresents; i > 0; i--)
+        for (int i = scheduledPresents; i > 0; i--)
             spawnPresent();
         scheduledPresents = 0;
     }
+
 }
