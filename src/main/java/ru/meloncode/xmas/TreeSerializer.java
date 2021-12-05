@@ -76,13 +76,13 @@ class TreeSerializer {
         trees.set("trees." + cKey + ".loc.z", tree.getLocation().getZ());
         if (tree.getLevelupRequirements() != null && tree.getLevelupRequirements().size() > 0)
             trees.createSection("trees." + cKey + ".levelup", tree.getLevelupRequirements());
+        trees.set("trees." + cKey + ".present_counter", tree.getPresentCounter());
+        trees.set("trees." + cKey + ".scheduled_presents", tree.getScheduledPresents());
         try {
             trees.save(treesFile);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        trees.set("trees." + cKey + ".present_counter", tree.getPresentCounter());
-        trees.set("trees." + cKey + ".scheduled_presents", tree.getScheduledPresents());
     }
 
     public static void removeTree(MagicTree tree) {

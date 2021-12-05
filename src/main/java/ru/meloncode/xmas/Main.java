@@ -186,10 +186,10 @@ public class Main extends JavaPlugin implements Listener {
 
     private void defineTreeLevels() {
 
-        long sapling_delay = config.getInt("xmas.tree-lvl.sapling.gift-cooldown") * 20 / UPDATE_SPEED;
-        long small_delay = config.getInt("xmas.tree-lvl.small_tree.gift-cooldown") * 20 / UPDATE_SPEED;
-        long tree_delay = config.getInt("xmas.tree-lvl.tree.gift-cooldown") * 20 / UPDATE_SPEED;
-        long magic_delay = config.getInt("xmas.tree-lvl.magic_tree.gift-cooldown") * 20 / UPDATE_SPEED;
+        long sapling_delay = config.getInt("xmas.tree-lvl.sapling.gift-cooldown") * 20L / UPDATE_SPEED;
+        long small_delay = config.getInt("xmas.tree-lvl.small_tree.gift-cooldown") * 20L / UPDATE_SPEED;
+        long tree_delay = config.getInt("xmas.tree-lvl.tree.gift-cooldown") * 20L / UPDATE_SPEED;
+        long magic_delay = config.getInt("xmas.tree-lvl.magic_tree.gift-cooldown") * 20L / UPDATE_SPEED;
 
         ConfigurationSection lvlups = config.getConfigurationSection("xmas.tree-lvl");
         Map<Material, Integer> saplingLevelUp = TreeSerializer.convertRequirementsMap(lvlups.getConfigurationSection("sapling.lvlup").getValues(false));
@@ -197,7 +197,6 @@ public class Main extends JavaPlugin implements Listener {
         Map<Material, Integer> treeLevelUp = TreeSerializer.convertRequirementsMap(lvlups.getConfigurationSection("tree.lvlup").getValues(false));
 
         TreeLevel.MAGIC_TREE = new TreeLevel("magic_tree", Effects.TREE_WHITE_AMBIENT, Effects.TREE_SWAG, null, null, magic_delay, Collections.emptyMap(), new StructureTemplate(new HashMap<Vector, Material>() {
-            private static final long serialVersionUID = 1L;
 
             {
                 put(new Vector(0, -1, 0), Material.GRASS_BLOCK);
@@ -233,7 +232,6 @@ public class Main extends JavaPlugin implements Listener {
         }));
 
         TreeLevel.TREE = new TreeLevel("tree", Effects.AMBIENT_SNOW, Effects.TREE_GOLD_SWAG, null, TreeLevel.MAGIC_TREE, tree_delay, treeLevelUp, new StructureTemplate(new HashMap<Vector, Material>() {
-            private static final long serialVersionUID = 1L;
 
             {
                 put(new Vector(0, -1, 0), Material.GRASS_BLOCK);
@@ -266,7 +264,6 @@ public class Main extends JavaPlugin implements Listener {
         }));
 
         TreeLevel.SMALL_TREE = new TreeLevel("small_tree", Effects.AMBIENT_PORTAL, Effects.TREE_RED_SWAG, null, TreeLevel.TREE, small_delay, smallLevelUp, new StructureTemplate(new HashMap<Vector, Material>() {
-            private static final long serialVersionUID = 1L;
 
             {
                 put(new Vector(0, -1, 0), Material.GRASS_BLOCK);
@@ -293,7 +290,6 @@ public class Main extends JavaPlugin implements Listener {
         }));
 
         TreeLevel.SAPLING = new TreeLevel("sapling", Effects.AMBIENT_SAPLING, null, null, TreeLevel.SMALL_TREE, sapling_delay, saplingLevelUp, new StructureTemplate(new HashMap<Vector, Material>() {
-            private static final long serialVersionUID = 1L;
 
             {
                 put(new Vector(0, -1, 0), Material.GRASS_BLOCK);

@@ -110,7 +110,7 @@ public class MagicTree {
             if (level.getGiftDelay() > 0) {
                 if (presentCounter == 0) {
                     spawnPresent();
-                    presentCounter = (long) ((level.getGiftDelay() * 1.25 - level.getGiftDelay() * 0.75) + level.getGiftDelay() * 0.75);
+                    presentCounter = (long) (Math.random() * (level.getGiftDelay() / 2) + level.getGiftDelay());
                 }
                 presentCounter--;
             }

@@ -32,6 +32,7 @@ class XMas {
 
     public static void addMagicTree(MagicTree tree) {
         trees.put(tree.getTreeUID(), tree);
+        trees_byChunk.computeIfAbsent(LocationUtils.getChunkKey(tree.getLocation()), aLong -> new ArrayList<>()).add(tree);
         tree.build();
     }
 
