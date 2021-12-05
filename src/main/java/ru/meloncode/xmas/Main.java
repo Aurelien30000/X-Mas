@@ -163,10 +163,10 @@ public class Main extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        if (XMas.getAllTrees().size() > 0)
-            for (MagicTree tree : XMas.getAllTrees()) {
-                tree.unbuild();
-            }
+        for (MagicTree tree : XMas.getAllTrees()) {
+            tree.unbuild();
+            tree.save();
+        }
     }
 
     public void end() {

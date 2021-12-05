@@ -190,6 +190,8 @@ public class MagicTree {
 
     @SuppressWarnings("deprecation")
     public void spawnPresent() {
+        if (scheduledPresents >= 8)
+            return;
         Location presentLoc = location.clone().add(-1 + Main.RANDOM.nextInt(3), 0, -1 + Main.RANDOM.nextInt(3));
         if (!presentLoc.isChunkLoaded()) {
             if (scheduledPresents + 1 <= 8)
