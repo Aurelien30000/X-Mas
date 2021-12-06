@@ -154,8 +154,8 @@ public class MagicTree {
         this.level = level.nextLevel;
         this.levelupRequirements = new HashMap<>(level.getLevelupRequirements());
         for (int i = 0; i <= 3; i++) {
-            Firework fw = location.getWorld().spawn(location.clone().add(new Vector(-3 + Main.RANDOM.nextInt(6), 3, -3 + Main.RANDOM.nextInt(6))), Firework.class);
-            FireworkMeta meta = fw.getFireworkMeta();
+            final Firework fw = location.getWorld().spawn(location.clone().add(new Vector(-3 + Main.RANDOM.nextInt(6), 3, -3 + Main.RANDOM.nextInt(6))), Firework.class);
+            final FireworkMeta meta = fw.getFireworkMeta();
             meta.addEffect(FireworkEffect.builder().trail(true).withColor(Color.RED).withFade(Color.LIME).withFlicker().with(Type.BURST).build());
             fw.setFireworkMeta(meta);
             fw.setMetadata("nodamage", new FixedMetadataValue(Main.getInstance(), true));
@@ -190,36 +190,38 @@ public class MagicTree {
 
     @SuppressWarnings("deprecation")
     public void spawnPresent() {
-        if (scheduledPresents >= 8)
-            return;
-        Location presentLoc = location.clone().add(-1 + Main.RANDOM.nextInt(3), 0, -1 + Main.RANDOM.nextInt(3));
-        if (!presentLoc.isChunkLoaded()) {
+        if (!location.isChunkLoaded()) {
             if (scheduledPresents + 1 <= 8)
                 scheduledPresents++;
             return;
         }
 
-        presentLoc.getWorld().getChunkAtAsync(location, false).thenRun(() -> {
-            final Block pBlock = presentLoc.getBlock();
+        location.getWorld().getChunkAtAsync(location, false).thenRun(() -> {
+            for (int x = -1; x < 2; x++) {
+                for (int y = -1; y < 2; y++) {
+                    if (x == 0 && y == 0)
+                        continue;
 
-            if (!pBlock.getType().isSolid() && pBlock.getType() != Material.SPRUCE_SAPLING) {
-                pBlock.setType(Material.PLAYER_HEAD);
-                final BlockState state = pBlock.getState();
-                if (state instanceof Skull) {
-                    final Skull skull = (Skull) state;
-                    BlockFace face;
-                    do {
-                        face = BlockFace.values()[Main.RANDOM.nextInt(BlockFace.values().length)];
+                    final Block block = location.clone().add(x, 0, y).getBlock();
+                    if (block.getType() == Material.AIR) {
+                        block.setType(Material.PLAYER_HEAD);
+                        final BlockState state = block.getState();
+                        final Skull skull = (Skull) state;
+                        BlockFace face;
+                        do {
+                            face = BlockFace.values()[Main.RANDOM.nextInt(BlockFace.values().length)];
+                        }
+                        while (face == BlockFace.DOWN || face == BlockFace.UP || face == BlockFace.SELF);
+                        //skull.setRotation(face);
+                        final Rotatable skullRotatable = (Rotatable) skull.getBlockData();
+                        skullRotatable.setRotation(face);
+                        //skull.setSkullType(SkullType.PLAYER);
+                        skull.setType(Material.PLAYER_HEAD);
+                        //skull.setOwner();
+                        skull.setOwningPlayer(Bukkit.getOfflinePlayer(Main.getHeads().get(Main.RANDOM.nextInt(Main.getHeads().size()))));
+                        skull.update(true);
+                        break;
                     }
-                    while (face == BlockFace.DOWN || face == BlockFace.UP || face == BlockFace.SELF);
-                    //skull.setRotation(face);
-                    final Rotatable skullRotatable = (Rotatable) skull.getBlockData();
-                    skullRotatable.setRotation(face);
-                    //skull.setSkullType(SkullType.PLAYER);
-                    skull.setType(Material.PLAYER_HEAD);
-                    //skull.setOwner();
-                    skull.setOwningPlayer(Bukkit.getOfflinePlayer(Main.getHeads().get(Main.RANDOM.nextInt(Main.getHeads().size()))));
-                    skull.update(true);
                 }
             }
         });
