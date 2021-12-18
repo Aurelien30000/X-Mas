@@ -220,7 +220,7 @@ public class MagicTree {
                         //skull.setOwner();
                         skull.setOwningPlayer(Bukkit.getOfflinePlayer(Main.getHeads().get(Main.RANDOM.nextInt(Main.getHeads().size()))));
                         skull.update(true);
-                        break;
+                        return;
                     }
                 }
             }
