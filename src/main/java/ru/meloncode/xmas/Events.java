@@ -63,7 +63,7 @@ class Events implements Listener {
                         event.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerClickBlock(PlayerInteractEvent event) {
         if (event.getHand() == EquipmentSlot.OFF_HAND) return; //Event firing for both hands
         Player player = event.getPlayer();
