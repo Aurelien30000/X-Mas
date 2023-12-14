@@ -65,7 +65,8 @@ class Events implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerClickBlock(PlayerInteractEvent event) {
-        if (event.getHand() == EquipmentSlot.OFF_HAND) return; //Event firing for both hands
+        if (event.getHand() == EquipmentSlot.OFF_HAND)
+            return; // Event firing for both hands
         Player player = event.getPlayer();
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             Block block = event.getClickedBlock();
@@ -94,7 +95,7 @@ class Events implements Listener {
                             if (tree.level.nextLevel != null) {
                                 TextUtils.sendActionBarMessage(player, TextUtils.generateChatReqList(tree));
 
-                                if (tree.getLevelupRequirements().size() == 0) {
+                                if (tree.getLevelupRequirements().isEmpty()) {
                                     TextUtils.sendMessage(player, LocaleManager.GROW_LVL_READY);
                                 }
                             }

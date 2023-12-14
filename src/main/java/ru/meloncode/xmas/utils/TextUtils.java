@@ -1,7 +1,6 @@
 package ru.meloncode.xmas.utils;
 
-import org.apache.commons.lang.NullArgumentException;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,17 +12,21 @@ public class TextUtils {
 
     public static String generateChatReqList(MagicTree tree) {
         if (tree == null)
-            throw new NullArgumentException("tree");
+            throw new NullPointerException("tree");
         StringBuilder string = new StringBuilder();
         string.append(ChatColor.GOLD).append(LocaleManager.GROW_REQ_LIST_TITLE).append(" : ");
-        if (tree.getLevel().getLevelupRequirements() != null && tree.getLevel().getLevelupRequirements().size() > 0)
+        if (tree.getLevel().getLevelupRequirements() != null && !tree.getLevel().getLevelupRequirements().isEmpty())
             for (Material cMaterial : tree.getLevel().getLevelupRequirements().keySet()) {
                 int levelReq = tree.getLevel().getLevelupRequirements().get(cMaterial);
-                int treeReq = 0;
-                if (tree.getLevelupRequirements().containsKey(cMaterial))
-                    treeReq = tree.getLevelupRequirements().get(cMaterial);
-
-                string.append(ChatColor.BOLD).append(treeReq == 0 ? ChatColor.GREEN + "" + ChatColor.STRIKETHROUGH : ChatColor.RED).append(WordUtils.capitalizeFully(String.valueOf(cMaterial).replace('_', ' ') + " : " + (levelReq - treeReq + " / " + levelReq))).append(ChatColor.RESET).append(" ").append(ChatColor.GOLD).append("-").append(" ");
+                int treeReq = tree.getLevelupRequirements().getOrDefault(cMaterial, 0);
+                string.append(ChatColor.BOLD)
+                        .append(treeReq == 0 ? ChatColor.GREEN + "" + ChatColor.STRIKETHROUGH : ChatColor.RED)
+                        .append(WordUtils.capitalizeFully(String.valueOf(cMaterial).replace('_', ' ') + " : " + (levelReq - treeReq + " / " + levelReq)))
+                        .append(ChatColor.RESET)
+                        .append(" ")
+                        .append(ChatColor.GOLD)
+                        .append("-")
+                        .append(" ");
             }
         return string.toString();
     }

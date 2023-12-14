@@ -28,7 +28,7 @@ class TreeSerializer {
             Location loc;
             long presentCounter;
             int scheduledPresents;
-            if (trees.getConfigurationSection("trees") != null && trees.getConfigurationSection("trees").getKeys(false).size() > 0) {
+            if (trees.getConfigurationSection("trees") != null && !trees.getConfigurationSection("trees").getKeys(false).isEmpty()) {
 
                 for (String cKey : trees.getConfigurationSection("trees").getKeys(false)) {
                     if (world.getName().equals(trees.getString("trees." + cKey + ".loc.world"))) {
@@ -74,7 +74,7 @@ class TreeSerializer {
         trees.set("trees." + cKey + ".loc.x", tree.getLocation().getX());
         trees.set("trees." + cKey + ".loc.y", tree.getLocation().getY());
         trees.set("trees." + cKey + ".loc.z", tree.getLocation().getZ());
-        if (tree.getLevelupRequirements() != null && tree.getLevelupRequirements().size() > 0)
+        if (tree.getLevelupRequirements() != null && !tree.getLevelupRequirements().isEmpty())
             trees.createSection("trees." + cKey + ".levelup", tree.getLevelupRequirements());
         trees.set("trees." + cKey + ".present_counter", tree.getPresentCounter());
         trees.set("trees." + cKey + ".scheduled_presents", tree.getScheduledPresents());

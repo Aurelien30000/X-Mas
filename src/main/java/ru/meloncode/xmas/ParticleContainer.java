@@ -18,7 +18,7 @@ public class ParticleContainer {
             new DustOptions(Color.BLUE, 1f),
             new DustOptions(Color.FUCHSIA, 1f)
     };
-    final static Random random = new Random("Happy 2021!".hashCode());
+    final static Random random = new Random("Happy 2023!".hashCode());
 
     private final Particle type;
     private final float offsetX;

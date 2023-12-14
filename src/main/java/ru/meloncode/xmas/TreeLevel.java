@@ -39,18 +39,13 @@ public class TreeLevel {
     public static TreeLevel fromString(String name) {
         if (name == null)
             throw new IllegalArgumentException("Level name cannot be null!");
-        switch (name.toLowerCase()) {
-            case "sapling":
-                return SAPLING;
-            case "tree":
-                return TREE;
-            case "small_tree":
-                return SMALL_TREE;
-            case "magic_tree":
-                return MAGIC_TREE;
-            default:
-                throw new IllegalArgumentException("Wrong level '" + name + "'");
-        }
+        return switch (name.toLowerCase()) {
+            case "sapling" -> SAPLING;
+            case "tree" -> TREE;
+            case "small_tree" -> SMALL_TREE;
+            case "magic_tree" -> MAGIC_TREE;
+            default -> throw new IllegalArgumentException("Wrong level '" + name + "'");
+        };
     }
 
     public String getLevelName() {

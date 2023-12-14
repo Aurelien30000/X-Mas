@@ -5,7 +5,6 @@ import org.bukkit.FireworkEffect.Type;
 import org.bukkit.block.*;
 import org.bukkit.block.data.Rotatable;
 import org.bukkit.entity.Firework;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -66,13 +65,6 @@ public class MagicTree {
         return owner;
     }
 
-    public Player getPlayerOwner() {
-        if (Bukkit.getPlayer(owner) != null) {
-            return Bukkit.getPlayer(owner);
-        }
-        return null;
-    }
-
     public TreeLevel getLevel() {
         return level;
     }
@@ -87,18 +79,21 @@ public class MagicTree {
 
     public boolean grow(Material material) {
         if (levelupRequirements.containsKey(material)) {
+            float levelReq = getLevel().getLevelupRequirements().get(material);
+            int treeReq;
             if (levelupRequirements.get(material) <= 1) {
                 levelupRequirements.remove(material);
+                treeReq = 0;
             } else {
-                levelupRequirements.put(material, levelupRequirements.get(material) - 1);
+                treeReq = levelupRequirements.get(material) - 1;
+                levelupRequirements.put(material, treeReq);
             }
             for (Block block : blocks) {
                 if (block.getType() == Material.SPRUCE_LEAVES || block.getType() == Material.SPRUCE_SAPLING) {
                     Effects.GROW.playEffect(block.getLocation());
-                    for (int i = 0; i <= 3; i++)
-                        location.getWorld().playSound(location, Sound.ENTITY_PLAYER_LEVELUP, 1, Main.RANDOM.nextFloat() + 0.2f);
                 }
             }
+            location.getWorld().playSound(location, Sound.ENTITY_PLAYER_LEVELUP, 1, 0.2f + ((levelReq - treeReq) / levelReq));
             save();
             return true;
         }
@@ -118,7 +113,7 @@ public class MagicTree {
     }
 
     public void playParticles() {
-        if (blocks != null && blocks.size() > 0) {
+        if (blocks != null && !blocks.isEmpty()) {
             if (!location.isChunkLoaded())
                 return;
             for (Block block : blocks) {
@@ -228,7 +223,7 @@ public class MagicTree {
     }
 
     public boolean canLevelUp() {
-        return getLevelupRequirements().size() == 0;
+        return getLevelupRequirements().isEmpty();
     }
 
     public UUID getTreeUID() {
@@ -271,7 +266,7 @@ public class MagicTree {
             inv.addItem(new ItemStack(Material.EMERALD, 1));
             TreeLevel cLevel = TreeLevel.SAPLING;
             while (cLevel != level) {
-                if (cLevel.getLevelupRequirements() != null && cLevel.getLevelupRequirements().size() > 0) {
+                if (cLevel.getLevelupRequirements() != null && !cLevel.getLevelupRequirements().isEmpty()) {
                     for (Entry<Material, Integer> currItem : cLevel.getLevelupRequirements().entrySet()) {
                         inv.addItem(new ItemStack(currItem.getKey(), currItem.getValue()));
                     }

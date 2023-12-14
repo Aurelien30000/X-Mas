@@ -1,5 +1,6 @@
 package ru.meloncode.xmas;
 
+import com.destroystokyo.paper.MaterialTags;
 import com.google.common.collect.Lists;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
@@ -89,17 +90,17 @@ public class Main extends JavaPlugin implements Listener {
 
         LocaleManager.loadLocale(locale);
         heads = config.getStringList("xmas.presents");
-        if (heads.size() == 0) {
+        if (heads.isEmpty()) {
             getLogger().warning(ChatColor.RED + "Warning! No heads loaded! Presents can't spawn without box!");
             return;
         }
         gifts = new ArrayList<>();
         for (String cItem : config.getStringList("xmas.gifts")) {
             try {
-
                 if (cItem.contains(":")) {
                     String[] split = cItem.split(":");
-                    if (split.length == 0) throw new IllegalArgumentException();
+                    if (split.length == 0)
+                        throw new IllegalArgumentException();
 
                     Material material;
                     int amount = 1;
@@ -115,9 +116,29 @@ public class Main extends JavaPlugin implements Listener {
                 getLogger().warning(ChatColor.RED + "[X-Mas] For gifts - use format MATERIAL:AMOUNT:DATA. Amount and data are optional");
             }
         }
-        if (gifts.size() == 0) {
-            getLogger().warning(ChatColor.RED + "[X-Mas] Warning! No gifts loaded! No X-Mas without gifts!");
-            return;
+        if (gifts.isEmpty()) {
+            getLogger().warning(ChatColor.RED + "[X-Mas] Warning! No gifts loaded! Generating...");
+
+            for (Material material : Material.values()) {
+                if (!material.isItem()
+                        || material.isAir()
+                        || material.getCreativeCategory() == null
+                        || MaterialTags.SPAWN_EGGS.isTagged(material)) {
+                    continue;
+                }
+
+                switch (material) {
+                    case SPAWNER -> {
+                    }
+                    default -> gifts.add(new ItemStack(material));
+                }
+            }
+
+            config.set("xmas.gifts", gifts.stream()
+                    .map(itemStack -> itemStack.getType().name())
+                    .sorted()
+                    .toList());
+            saveConfig();
         }
 
         LUCK_CHANCE_ENABLED = config.getBoolean("xmas.luck.enabled");
@@ -196,7 +217,7 @@ public class Main extends JavaPlugin implements Listener {
         Map<Material, Integer> smallLevelUp = TreeSerializer.convertRequirementsMap(lvlups.getConfigurationSection("small_tree.lvlup").getValues(false));
         Map<Material, Integer> treeLevelUp = TreeSerializer.convertRequirementsMap(lvlups.getConfigurationSection("tree.lvlup").getValues(false));
 
-        TreeLevel.MAGIC_TREE = new TreeLevel("magic_tree", Effects.TREE_WHITE_AMBIENT, Effects.TREE_SWAG, null, null, magic_delay, Collections.emptyMap(), new StructureTemplate(new HashMap<Vector, Material>() {
+        TreeLevel.MAGIC_TREE = new TreeLevel("magic_tree", Effects.TREE_WHITE_AMBIENT, Effects.TREE_SWAG, null, null, magic_delay, Collections.emptyMap(), new StructureTemplate(new HashMap<>() {
 
             {
                 put(new Vector(0, -1, 0), Material.GRASS_BLOCK);
@@ -231,7 +252,7 @@ public class Main extends JavaPlugin implements Listener {
             }
         }));
 
-        TreeLevel.TREE = new TreeLevel("tree", Effects.AMBIENT_SNOW, Effects.TREE_GOLD_SWAG, null, TreeLevel.MAGIC_TREE, tree_delay, treeLevelUp, new StructureTemplate(new HashMap<Vector, Material>() {
+        TreeLevel.TREE = new TreeLevel("tree", Effects.AMBIENT_SNOW, Effects.TREE_GOLD_SWAG, null, TreeLevel.MAGIC_TREE, tree_delay, treeLevelUp, new StructureTemplate(new HashMap<>() {
 
             {
                 put(new Vector(0, -1, 0), Material.GRASS_BLOCK);
@@ -263,7 +284,7 @@ public class Main extends JavaPlugin implements Listener {
             }
         }));
 
-        TreeLevel.SMALL_TREE = new TreeLevel("small_tree", Effects.AMBIENT_PORTAL, Effects.TREE_RED_SWAG, null, TreeLevel.TREE, small_delay, smallLevelUp, new StructureTemplate(new HashMap<Vector, Material>() {
+        TreeLevel.SMALL_TREE = new TreeLevel("small_tree", Effects.AMBIENT_PORTAL, Effects.TREE_RED_SWAG, null, TreeLevel.TREE, small_delay, smallLevelUp, new StructureTemplate(new HashMap<>() {
 
             {
                 put(new Vector(0, -1, 0), Material.GRASS_BLOCK);
@@ -289,7 +310,7 @@ public class Main extends JavaPlugin implements Listener {
             }
         }));
 
-        TreeLevel.SAPLING = new TreeLevel("sapling", Effects.AMBIENT_SAPLING, null, null, TreeLevel.SMALL_TREE, sapling_delay, saplingLevelUp, new StructureTemplate(new HashMap<Vector, Material>() {
+        TreeLevel.SAPLING = new TreeLevel("sapling", Effects.AMBIENT_SAPLING, null, null, TreeLevel.SMALL_TREE, sapling_delay, saplingLevelUp, new StructureTemplate(new HashMap<>() {
 
             {
                 put(new Vector(0, -1, 0), Material.GRASS_BLOCK);
