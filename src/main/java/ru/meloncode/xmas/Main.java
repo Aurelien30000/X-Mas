@@ -128,7 +128,8 @@ public class Main extends JavaPlugin implements Listener {
                 }
 
                 switch (material) {
-                    case SPAWNER -> {
+                    case CHAIN_COMMAND_BLOCK, COMMAND_BLOCK, COMMAND_BLOCK_MINECART, REPEATING_COMMAND_BLOCK,
+                            SPAWNER, STRUCTURE_BLOCK, STRUCTURE_VOID -> {
                     }
                     default -> gifts.add(new ItemStack(material));
                 }
@@ -158,7 +159,6 @@ public class Main extends JavaPlugin implements Listener {
                 registered = true;
                 break;
             }
-
         }
         try {
             if (!registered)
@@ -218,7 +218,6 @@ public class Main extends JavaPlugin implements Listener {
         Map<Material, Integer> treeLevelUp = TreeSerializer.convertRequirementsMap(lvlups.getConfigurationSection("tree.lvlup").getValues(false));
 
         TreeLevel.MAGIC_TREE = new TreeLevel("magic_tree", Effects.TREE_WHITE_AMBIENT, Effects.TREE_SWAG, null, null, magic_delay, Collections.emptyMap(), new StructureTemplate(new HashMap<>() {
-
             {
                 put(new Vector(0, -1, 0), Material.GRASS_BLOCK);
                 for (int i = 0; i <= 5; i++) {
@@ -253,7 +252,6 @@ public class Main extends JavaPlugin implements Listener {
         }));
 
         TreeLevel.TREE = new TreeLevel("tree", Effects.AMBIENT_SNOW, Effects.TREE_GOLD_SWAG, null, TreeLevel.MAGIC_TREE, tree_delay, treeLevelUp, new StructureTemplate(new HashMap<>() {
-
             {
                 put(new Vector(0, -1, 0), Material.GRASS_BLOCK);
                 put(new Vector(0, 0, 0), Material.SPRUCE_LOG);
@@ -285,7 +283,6 @@ public class Main extends JavaPlugin implements Listener {
         }));
 
         TreeLevel.SMALL_TREE = new TreeLevel("small_tree", Effects.AMBIENT_PORTAL, Effects.TREE_RED_SWAG, null, TreeLevel.TREE, small_delay, smallLevelUp, new StructureTemplate(new HashMap<>() {
-
             {
                 put(new Vector(0, -1, 0), Material.GRASS_BLOCK);
                 put(new Vector(0, 0, 0), Material.SPRUCE_LOG);
@@ -311,7 +308,6 @@ public class Main extends JavaPlugin implements Listener {
         }));
 
         TreeLevel.SAPLING = new TreeLevel("sapling", Effects.AMBIENT_SAPLING, null, null, TreeLevel.SMALL_TREE, sapling_delay, saplingLevelUp, new StructureTemplate(new HashMap<>() {
-
             {
                 put(new Vector(0, -1, 0), Material.GRASS_BLOCK);
                 put(new Vector(0, 0, 0), Material.SPRUCE_SAPLING);
