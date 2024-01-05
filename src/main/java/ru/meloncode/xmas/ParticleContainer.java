@@ -6,6 +6,7 @@ import org.bukkit.Particle;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.entity.Player;
 
+import java.util.Calendar;
 import java.util.Random;
 
 public class ParticleContainer {
@@ -18,7 +19,7 @@ public class ParticleContainer {
             new DustOptions(Color.BLUE, 1f),
             new DustOptions(Color.FUCHSIA, 1f)
     };
-    final static Random random = new Random("Happy 2023!".hashCode());
+    final static Random random = new Random(("Happy " + Calendar.getInstance().get(Calendar.YEAR) + "!").hashCode());
 
     private final Particle type;
     private final float offsetX;
