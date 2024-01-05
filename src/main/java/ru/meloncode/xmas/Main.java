@@ -25,6 +25,7 @@ import java.util.*;
 public class Main extends JavaPlugin implements Listener {
 
     // Yeah. That's as it should be.
+    static final Random RANDOM = new Random(Calendar.getInstance().get(Calendar.YEAR));
     static List<ItemStack> gifts;
     static float LUCK_CHANCE;
     static boolean LUCK_CHANCE_ENABLED;
@@ -33,7 +34,6 @@ public class Main extends JavaPlugin implements Listener {
     static boolean autoEnd;
     static long endTime;
     static boolean inProgress;
-    private static final Random RANDOM = new Random(Calendar.getInstance().get(Calendar.YEAR));
     private static int UPDATE_SPEED;
     private static int PARTICLES_DELAY;
     private static List<String> HEADS;
