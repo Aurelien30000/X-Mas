@@ -15,41 +15,40 @@ import ru.meloncode.xmas.utils.TextUtils;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.meloncode.xmas.Main.RANDOM;
-
 class XMas {
 
-    private static final Map<UUID, MagicTree> trees = new ConcurrentHashMap<>();
-    private static final Map<Long, List<MagicTree>> trees_byChunk = new ConcurrentHashMap<>();
+    private static final Map<UUID, MagicTree> TREES = new ConcurrentHashMap<>();
+    private static final Map<Long, List<MagicTree>> TREES_BY_CHUNK = new ConcurrentHashMap<>();
+    private static final Random RANDOM = new Random();
     public static ItemStack XMAS_CRYSTAL;
 
     public static void createMagicTree(Player player, Location loc) {
         MagicTree tree = new MagicTree(player.getUniqueId(), TreeLevel.SAPLING, loc);
-        trees.put(tree.getTreeUID(), tree);
-        trees_byChunk.computeIfAbsent(LocationUtils.getChunkKey(tree.getLocation()), aLong -> new ArrayList<>()).add(tree);
+        TREES.put(tree.getTreeUID(), tree);
+        TREES_BY_CHUNK.computeIfAbsent(LocationUtils.getChunkKey(tree.getLocation()), aLong -> new ArrayList<>()).add(tree);
         tree.save();
     }
 
     public static void addMagicTree(MagicTree tree) {
-        trees.put(tree.getTreeUID(), tree);
-        trees_byChunk.computeIfAbsent(LocationUtils.getChunkKey(tree.getLocation()), aLong -> new ArrayList<>()).add(tree);
+        TREES.put(tree.getTreeUID(), tree);
+        TREES_BY_CHUNK.computeIfAbsent(LocationUtils.getChunkKey(tree.getLocation()), aLong -> new ArrayList<>()).add(tree);
         tree.build();
     }
 
     public static Collection<MagicTree> getAllTrees() {
-        return trees.values();
+        return TREES.values();
     }
 
     @Nullable
     public static Collection<MagicTree> getAllTreesInChunk(Chunk chunk) {
-        return trees_byChunk.get(LocationUtils.getChunkKey(chunk));
+        return TREES_BY_CHUNK.get(LocationUtils.getChunkKey(chunk));
     }
 
     public static void removeTree(MagicTree tree) {
         tree.unbuild();
         TreeSerializer.removeTree(tree);
-        trees.remove(tree.getTreeUID());
-        trees_byChunk.remove(LocationUtils.getChunkKey(tree.getLocation()));
+        TREES.remove(tree.getTreeUID());
+        TREES_BY_CHUNK.remove(LocationUtils.getChunkKey(tree.getLocation()));
     }
 
     public static void processPresent(Block block, Player player) {
@@ -84,6 +83,6 @@ class XMas {
     }
 
     public static MagicTree getTree(UUID treeUID) {
-        return trees.get(treeUID);
+        return TREES.get(treeUID);
     }
 }

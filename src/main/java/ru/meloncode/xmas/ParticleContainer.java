@@ -19,7 +19,7 @@ public class ParticleContainer {
             new DustOptions(Color.BLUE, 1f),
             new DustOptions(Color.FUCHSIA, 1f)
     };
-    final static Random random = new Random(("Happy " + Calendar.getInstance().get(Calendar.YEAR) + "!").hashCode());
+    private static final Random RANDOM = new Random(("Happy " + Calendar.getInstance().get(Calendar.YEAR) + "!").hashCode());
 
     private final Particle type;
     private final float offsetX;
@@ -44,7 +44,7 @@ public class ParticleContainer {
             if (player.getLocation().distance(location) < 16) {
                 try {
                     if (type == Particle.REDSTONE) {
-                        player.spawnParticle(type, location, count, offsetX, offsetY, offsetZ, speed, COLORS[random.nextInt(6)]);
+                        player.spawnParticle(type, location, count, offsetX, offsetY, offsetZ, speed, COLORS[RANDOM.nextInt(6)]);
                     } else {
                         player.spawnParticle(type, location, count, offsetX, offsetY, offsetZ, speed);
                     }

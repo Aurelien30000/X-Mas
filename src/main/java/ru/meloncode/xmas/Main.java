@@ -25,7 +25,6 @@ import java.util.*;
 public class Main extends JavaPlugin implements Listener {
 
     // Yeah. That's as it should be.
-    static final Random RANDOM = new Random();
     static List<ItemStack> gifts;
     static float LUCK_CHANCE;
     static boolean LUCK_CHANCE_ENABLED;
@@ -34,24 +33,25 @@ public class Main extends JavaPlugin implements Listener {
     static boolean autoEnd;
     static long endTime;
     static boolean inProgress;
+    private static final Random RANDOM = new Random(Calendar.getInstance().get(Calendar.YEAR));
     private static int UPDATE_SPEED;
     private static int PARTICLES_DELAY;
-    private static List<String> heads;
-    private static Plugin plugin;
+    private static List<String> HEADS;
+    private static Plugin PLUGIN;
     private FileConfiguration config;
     private String locale;
 
     public static Plugin getInstance() {
-        return plugin;
+        return PLUGIN;
     }
 
     public static List<String> getHeads() {
-        return heads;
+        return HEADS;
     }
 
     @Override
     public void onLoad() {
-        plugin = this;
+        PLUGIN = this;
     }
 
     @Override
@@ -89,8 +89,8 @@ public class Main extends JavaPlugin implements Listener {
         }
 
         LocaleManager.loadLocale(locale);
-        heads = config.getStringList("xmas.presents");
-        if (heads.isEmpty()) {
+        HEADS = config.getStringList("xmas.presents");
+        if (HEADS.isEmpty()) {
             getLogger().warning(ChatColor.RED + "Warning! No heads loaded! Presents can't spawn without box!");
             return;
         }
@@ -199,10 +199,10 @@ public class Main extends JavaPlugin implements Listener {
 
     private void saveDefaults() {
         this.saveDefaultConfig();
-        plugin.saveResource("locales/default.yml", true);
+        PLUGIN.saveResource("locales/default.yml", true);
         ArrayList<String> defaults = Lists.newArrayList("locales/en.yml", "locales/ru.yml", "locales/ru_santa.yml", "trees.yml");
         for (String path : defaults)
-            if (!new File(getDataFolder(), '/' + path).exists()) plugin.saveResource(path, false);
+            if (!new File(getDataFolder(), '/' + path).exists()) PLUGIN.saveResource(path, false);
     }
 
     private void defineTreeLevels() {
